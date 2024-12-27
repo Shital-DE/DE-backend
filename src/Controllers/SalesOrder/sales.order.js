@@ -97,7 +97,10 @@ salesOrderRouter.get('/selected-assemblies-component-requirements', varifyToken,
             if (error) {
                 throw new AppError(NOT_FOUND, error, 404);
             }
-            selectQuery(data.assemblySelectedProductBOM, resp);
+             var query = data.assemblySelectedProductBOM.replace(/\n/g, " ");
+            query = query.replace(/{fromdate}/gim, req.query.fromdate);
+            query = query.replace(/{todate}/gim, req.query.todate);
+            selectQuery(query, resp);
         });
     }
 }));
