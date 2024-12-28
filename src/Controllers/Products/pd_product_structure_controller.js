@@ -169,6 +169,22 @@ productStructureRouter.delete('/delete-product-from-product-structure', varifyTo
     }
 }));
 
+// BOM deatils for insert in product structure
+productStructureRouter.get('/get-bom-data', varifyToken, tryCatch(async (req, resp) => {
+     const userData = authorizeToken(req.token);
+    if (userData) {
+        properties.parse(queryPath[24].PD_PRODUCT_PRODUCTBILLOFMATERIAL, { path: true }, function (error, data) {
+            if (error) {
+                throw new AppError(NOT_FOUND, error, 404);
+            }
+            var query = data.bomDetails.replace(/\n/g, ' ');
+            query = query.replace(/{product_id}/gim, req.query.product_id);
+            // console.log(query);
+            selectQuery(query, resp);
+        });
+    }
+}));
+
 module.exports = {
     productStructureRouter
 }

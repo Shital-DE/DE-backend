@@ -68,7 +68,6 @@ productRouteRouter.post('/product-revision', varifyToken, tryCatch(async (req, r
 // Product bill of material id 
 productRouteRouter.post('/product-bill-of-material-id', varifyToken, tryCatch(async (req, resp) => {
     const userData = authorizeToken(req.token);
-
     if (userData) {
         properties.parse(queryPath[24].PD_PRODUCT_PRODUCTBILLOFMATERIAL, { path: true }, function (error, data) {
             if (error) {
