@@ -92,10 +92,12 @@ productStructureRouter.post('/register-product-structure', varifyToken, tryCatch
                 insertQuery(query, resp);
             } else {
                 for (var item of req.body.selectedProducts) {
-                    if (item['productTypeId'] == '4028b88151c96d3f0151c96fd3120001') {
+                    if (item['productTypeId'] == '4028b88151c96d3f0151c96fd3120001' || item['productTypeId'] == '4028b88151c96d3f0151c96fecf00002') {
                         var dataquery = data.productTreeRepresentation.replace(/\n/g, ' ');
                         dataquery = dataquery.replace(/{childproduct_id}/gim, item.productid);
                         dataquery = dataquery.replace(/{revision_number}/gim, item.revision);
+                        dataquery = dataquery.replace(/{quantity}/gim, 1);
+                        dataquery = dataquery.replace(/{sodetails_id}/gim, null);
                         var result = await executeSelectQuery(dataquery);
                         if (result[0]['build_product_structure'].length != 0) {
                             var query = data.insertQuery.replace(/\n/g, ' ');
@@ -147,7 +149,7 @@ productStructureRouter.post('/register-product-structure', varifyToken, tryCatch
                     }
                 }
                 if (req.body.selectedProducts.length = ids.length) {
-                    resp.send({ 'Status code': 200, 'Message': 'Success' });
+                    resp.send({ 'Status code': 200, 'Message': 'Success', 'data': ids });
                 }
             }
         });
@@ -181,6 +183,23 @@ productStructureRouter.get('/get-bom-data', varifyToken, tryCatch(async (req, re
             query = query.replace(/{product_id}/gim, req.query.product_id);
             // console.log(query);
             selectQuery(query, resp);
+        });
+    }
+}));
+
+// Raw material list
+productStructureRouter.get('/get-raw-material-list',
+    varifyToken,
+    tryCatch(async (req, resp) => {
+    console.log(1);
+    const userData = authorizeToken(req.token);
+    if (userData) {
+         properties.parse(queryPath[4].PD_PRODUCT, { path: true }, function (error, query) {
+            if (error) {
+                throw new AppError(NOT_FOUND, error, 404);
+             }
+             console.log(query.rawMaterialList);
+            selectQuery(query.rawMaterialList, resp);
         });
     }
 }));
