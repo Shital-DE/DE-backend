@@ -26,13 +26,13 @@ productStructureRouter.post('/product-structure-tree-representation', varifyToke
                 query = query.replace(/{revision_number}/gim, req.body.revision_number);
                 query = query.replace(/{quantity}/gim, req.body.quantity == undefined ? 1 : req.body.quantity);
                 query = query.replace(/{sodetails_id}/gim, req.body.sodetails_id == undefined ? null : req.body.sodetails_id);
-                // console.log(1, query);
+              
                 selectQuery(query, resp);
             } else {
                 var query = data.structureTableOneRecord.replace(/\n/g, ' ');
                 query = query.replace(/{id}/gim, req.body.stucture_table_id);
                 query = query.replace(/{quantity}/gim, req.body.quantity == undefined ? 1 : req.body.quantity);
-                // console.log(2, query);
+               
                 selectQuery(query, resp);
             }
         });
@@ -181,7 +181,7 @@ productStructureRouter.get('/get-bom-data', varifyToken, tryCatch(async (req, re
             }
             var query = data.bomDetails.replace(/\n/g, ' ');
             query = query.replace(/{product_id}/gim, req.query.product_id);
-            // console.log(query);
+           
             selectQuery(query, resp);
         });
     }
@@ -191,14 +191,14 @@ productStructureRouter.get('/get-bom-data', varifyToken, tryCatch(async (req, re
 productStructureRouter.get('/get-raw-material-list',
     varifyToken,
     tryCatch(async (req, resp) => {
-    console.log(1);
+   
     const userData = authorizeToken(req.token);
     if (userData) {
          properties.parse(queryPath[4].PD_PRODUCT, { path: true }, function (error, query) {
             if (error) {
                 throw new AppError(NOT_FOUND, error, 404);
              }
-             console.log(query.rawMaterialList);
+            
             selectQuery(query.rawMaterialList, resp);
         });
     }
