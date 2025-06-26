@@ -445,6 +445,11 @@ calibrationRouter.post(
           query = query.replace(/{duedate}/g, req.body.duedate);
           query = query.replace(/{certificate_id}/g, req.body.certificate_id);
           query = query.replace(/{frequency}/g, req.body.frequency);
+          query = query.replace(
+            /{remark}/g,
+            req.body.remark != undefined ? req.body.remark : NULL
+          );
+
           insertQuery(query, resp);
         }
       );
@@ -609,9 +614,9 @@ calibrationRouter.put(
   })
 );
 
-// All challans list
+// All work orders for outsourced instruments for calibration
 calibrationRouter.get(
-  "/instruments-outsource-all-workorders",
+  "/all-work-orders-for-outsourced-instruments-for-calibration",
   varifyToken,
   tryCatch(async (req, resp) => {
     const userData = authorizeToken(req.token);
@@ -623,7 +628,7 @@ calibrationRouter.get(
           if (error) {
             throw new AppError(NOT_FOUND, error, 404);
           }
-          selectQuery(data.allChallans, resp);
+          selectQuery(data.allCalibrationChallans, resp);
         }
       );
     }
@@ -964,6 +969,119 @@ calibrationRouter.get(
             throw new AppError(NOT_FOUND, error, 404);
           }
           selectQuery(data.rejectedInstrumentsDataQuery, resp);
+        }
+      );
+    }
+  })
+);
+
+// Outsource instrument
+calibrationRouter.put(
+  "/issue-and-reclaim-instruments",
+  varifyToken,
+  tryCatch(async (req, resp) => {
+    const userData = authorizeToken(req.token);
+    if (userData) {
+      properties.parse(
+        queryPath[45].PD_PRODUCT_INSTRUMENTCALIBRATIONSCHEDULE,
+        { path: true },
+        function (error, data) {
+          if (error) {
+            throw new AppError(NOT_FOUND, error, 404);
+          }
+          var query = data.issueAndReclaimInstruments.replace(/\n/g, " ");
+          query = query.replace(/{id}/g, req.body.id);
+          query = query.replace(/{isoutsourced}/g, req.body.isoutsourced);
+          updateQuery(query, resp);
+        }
+      );
+    }
+  })
+);
+
+// Available instruments
+calibrationRouter.get(
+  "/available-instruments",
+  varifyToken,
+  tryCatch(async (req, resp) => {
+    const userData = authorizeToken(req.token);
+    if (userData) {
+      properties.parse(
+        queryPath[45].PD_PRODUCT_INSTRUMENTCALIBRATIONSCHEDULE,
+        { path: true },
+        function (error, data) {
+          if (error) {
+            throw new AppError(NOT_FOUND, error, 404);
+          }
+          selectQuery(data.availableInstruments, resp);
+        }
+      );
+    }
+  })
+);
+
+// All work orders for outsourced instruments for use
+calibrationRouter.get(
+  "/all-work-orders-for-outsourced-instruments-for-use",
+  varifyToken,
+  tryCatch(async (req, resp) => {
+    const userData = authorizeToken(req.token);
+    if (userData) {
+      properties.parse(
+        queryPath[48].PD_PRODUCT_INSTRUMENTCALIBRATION_HISTORY,
+        { path: true },
+        function (error, data) {
+          if (error) {
+            throw new AppError(NOT_FOUND, error, 404);
+          }
+          selectQuery(data.allInstrumentOutsourceChallans, resp);
+        }
+      );
+    }
+  })
+);
+
+// Reclaim outsourced instruments
+calibrationRouter.get(
+  "/reclaim-outsourced-istruments",
+  varifyToken,
+  tryCatch(async (req, resp) => {
+    const userData = authorizeToken(req.token);
+    if (userData) {
+      properties.parse(
+        queryPath[45].PD_PRODUCT_INSTRUMENTCALIBRATIONSCHEDULE,
+        { path: true },
+        function (error, data) {
+          if (error) {
+            throw new AppError(NOT_FOUND, error, 404);
+          }
+          selectQuery(data.reclaimOutsourcedInstruments, resp);
+        }
+      );
+    }
+  })
+);
+
+// Instrument outsource history by contractor
+calibrationRouter.get(
+  "/outsourced-instrument-history-by-contractor",
+  varifyToken,
+  tryCatch(async (req, resp) => {
+    const userData = authorizeToken(req.token);
+    if (userData) {
+      properties.parse(
+        queryPath[48].PD_PRODUCT_INSTRUMENTCALIBRATION_HISTORY,
+        { path: true },
+        function (error, data) {
+          if (error) {
+            throw new AppError(NOT_FOUND, error, 404);
+          }
+          var query = data.instrumentsOutsourceHistoryBySubcontractor.replace(
+            /\n/g,
+            " "
+          );
+          query = query.replace(/{contractor_id}/g, req.query.vendorId);
+          selectQuery(query, resp);
         }
       );
     }

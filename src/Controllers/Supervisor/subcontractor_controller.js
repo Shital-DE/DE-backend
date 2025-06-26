@@ -138,17 +138,25 @@ subcontractorRouter.post(
 );
 
 // Calibration contractors
-subcontractorRouter.get('/calibration-contractors', varifyToken, tryCatch(async (req, resp) => {
+subcontractorRouter.get(
+  "/calibration-contractors",
+  varifyToken,
+  tryCatch(async (req, resp) => {
     const userData = authorizeToken(req.token);
     if (userData) {
-        properties.parse(queryPath[11].VW_CA_ACCOUNT_SUPPLIER, { path: true }, function (error, data) {
-            if (error) {
-                throw new AppError(NOT_FOUND, error, 404);
-            }
-            selectQuery(data.calibrationContractors, resp);
-        });
+      properties.parse(
+        queryPath[11].VW_CA_ACCOUNT_SUPPLIER,
+        { path: true },
+        function (error, data) {
+          if (error) {
+            throw new AppError(NOT_FOUND, error, 404);
+          }
+          selectQuery(data.calibrationContractors, resp);
+        }
+      );
     }
-}));
+  })
+);
 
 const defaultsubcontractorRouter = [tryCatch, errorHandler, AppError];
 
